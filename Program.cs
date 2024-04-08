@@ -1,5 +1,6 @@
 using hackathon_file_import.Core.Interfaces;
-using hackathon_file_import.Core.Models;
+using hackathon_file_import.Core.Services;
+using hackathon_file_import.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,8 +11,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<MongoDBSettings>(
-    builder.Configuration.GetSection("MongoDB"));
+builder.Services.AddSingleton<IRepository<byte[]>, BlobRepository>(provider =>
+    new BlobRepository(builder.Configuration.GetConnectionString("MongoDB")));
+
+builder.Services.AddTransient<IFileImportService, FileImportService>();
 
 var app = builder.Build();
 
@@ -25,7 +28,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

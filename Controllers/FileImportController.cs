@@ -2,6 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using hackathon_file_import.Core.Interfaces;
+using hackathon_file_import.Core.Services;
+using MongoDB.Bson;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using SharpCompress.Common;
 
 namespace hackathon_file_import.Controllers
 {
@@ -9,44 +14,24 @@ namespace hackathon_file_import.Controllers
     [ApiController]
     public class FileImportController : ControllerBase
     {
-        private readonly IFileRepository _fileRepository;
-        private readonly IConfiguration _configuration;
-        public FileImportController(IFileRepository fileRepository, IConfiguration configuration)
+
+        private readonly IFileImportService _fileImportService;
+
+        public FileImportController(IFileImportService fileImportService)
         {
-            _fileRepository = fileRepository;
-            _configuration = configuration;
+            _fileImportService = fileImportService;
         }
 
-        [HttpPost]
-        public IActionResult UploadFile(IFormFile file)
+        [HttpPost("upload")]
+        public IActionResult Upload(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            if (!_fileImportService.IsValidFile(file))
             {
-                return BadRequest("No file uploaded.");
+                return BadRequest("Invalid file type. Only CSV or Excel files are allowed.");
             }
 
-            var allowedFileTypes = _configuration.GetSection("AllowedFileTypes").Get<string[]>();
-
-
-            // Check if the uploaded file's content type is allowed
-            if (!Array.Exists(allowedFileTypes, fileType => fileType.Equals(file.ContentType)))
-            {
-                return BadRequest("Invalid file type. Please upload an allowed file type.");
-            }
-
-            try
-            {
-                using (var stream = file.OpenReadStream())
-                {
-                    _fileRepository.SaveFile(stream, file.FileName);
-                }
-                return Ok("File uploaded successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the file.");
-            }
+            _fileImportService.SaveFile(file);
+            return Ok("File uploaded successfully.");
         }
-
     }
 }
