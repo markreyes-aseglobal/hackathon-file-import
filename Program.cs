@@ -1,5 +1,6 @@
 using hackathon_file_import.Core.Interfaces;
 using hackathon_file_import.Core.Services;
+using hackathon_file_import.Infrastructure.DataAccess;
 using hackathon_file_import.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +12,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IRepository<byte[]>, BlobRepository>(provider =>
-    new BlobRepository(builder.Configuration.GetConnectionString("MongoDB")));
+//builder.Services.AddSingleton<IRepository<byte[]>, BlobRepository>(provider =>
+//    new BlobRepository(builder.Configuration.GetConnectionString("MongoDB")));
+builder.Services.AddSingleton<MongoDbContext>(provider =>
+    new MongoDbContext(
+        builder.Configuration.GetConnectionString("MongoDB"),
+        builder.Configuration.GetValue<string>("DatabaseName")));
 
 builder.Services.AddTransient<IFileImportService, FileImportService>();
-
+builder.Services.AddTransient<IRepository<byte[]>, BlobRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

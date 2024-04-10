@@ -5,8 +5,10 @@ using hackathon_file_import.Core.Interfaces;
 using hackathon_file_import.Core.Services;
 using MongoDB.Bson;
 using System.Collections.Generic;
+using hackathon_file_import.Infrastructure.Configurations;
 using Newtonsoft.Json;
 using SharpCompress.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace hackathon_file_import.Controllers
 {
@@ -16,10 +18,15 @@ namespace hackathon_file_import.Controllers
     {
 
         private readonly IFileImportService _fileImportService;
-
-        public FileImportController(IFileImportService fileImportService)
+        private readonly FileUploadMessageResults _fileUploadResults;
+        private readonly string _invalidFileTypeMessage;
+        private readonly string _successMessage;
+        public FileImportController(IFileImportService fileImportService, IConfiguration configuration)
         {
             _fileImportService = fileImportService;
+            _fileUploadResults = configuration.GetSection("FileUploadResults").Get<FileUploadMessageResults>();
+            _invalidFileTypeMessage = _fileUploadResults.InvalidFileTypeMessage;
+            _successMessage = _fileUploadResults.SuccessMessage;
         }
 
         [HttpPost("upload")]
@@ -27,11 +34,11 @@ namespace hackathon_file_import.Controllers
         {
             if (!_fileImportService.IsValidFile(file))
             {
-                return BadRequest("Invalid file type. Only CSV or Excel files are allowed.");
+                return BadRequest(_invalidFileTypeMessage);
             }
 
             _fileImportService.SaveFile(file);
-            return Ok("File uploaded successfully.");
+            return Ok(_successMessage);
         }
     }
 }
