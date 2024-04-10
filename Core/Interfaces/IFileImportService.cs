@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using hackathon_file_import.Core.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace hackathon_file_import.Core.Interfaces
 {
@@ -6,5 +7,7 @@ namespace hackathon_file_import.Core.Interfaces
     {
         bool IsValidFile(IFormFile file);
         void SaveFile(IFormFile file);
+
+        IEnumerable<FileMetaData> GetFileEntries();
     }
 }

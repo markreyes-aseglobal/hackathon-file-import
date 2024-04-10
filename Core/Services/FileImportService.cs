@@ -1,4 +1,5 @@
 ﻿using hackathon_file_import.Core.Interfaces;
+using hackathon_file_import.Core.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -40,6 +41,11 @@ namespace hackathon_file_import.Core.Services
                 var fileBytes = memoryStream.ToArray();
                 _repository.Add(fileBytes);
             }
+        }
+
+        public IEnumerable<FileMetaData> GetFileEntries()
+        {
+            return _repository.GetFileEntries();
         }
     }
 }

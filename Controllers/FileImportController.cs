@@ -9,6 +9,7 @@ using hackathon_file_import.Infrastructure.Configurations;
 using Newtonsoft.Json;
 using SharpCompress.Common;
 using Microsoft.Extensions.Configuration;
+using hackathon_file_import.Core.Models;
 
 namespace hackathon_file_import.Controllers
 {
@@ -27,6 +28,12 @@ namespace hackathon_file_import.Controllers
             _fileUploadResults = configuration.GetSection("FileUploadResults").Get<FileUploadMessageResults>();
             _invalidFileTypeMessage = _fileUploadResults.InvalidFileTypeMessage;
             _successMessage = _fileUploadResults.SuccessMessage;
+        }
+
+        [HttpGet]
+        public IEnumerable<FileMetaData> GetFileEntries()
+        {
+            return _fileImportService.GetFileEntries();
         }
 
         [HttpPost("upload")]
