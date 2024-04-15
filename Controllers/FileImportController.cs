@@ -10,12 +10,11 @@ using Newtonsoft.Json;
 using SharpCompress.Common;
 using Microsoft.Extensions.Configuration;
 using hackathon_file_import.Core.Models;
-using Microsoft.AspNetCore.Authorization;
+using hackaton_file_import.common.Attributes;
 
 namespace hackathon_file_import.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
     public class FileImportController : ControllerBase
     {
@@ -32,15 +31,14 @@ namespace hackathon_file_import.Controllers
             _successMessage = _fileUploadResults.SuccessMessage;
         }
 
-        [Authorize]
         [HttpGet]
         public IEnumerable<FileMetaData> GetFileEntries()
         {
             return _fileImportService.GetFileEntries();
         }
 
-        [Authorize]
         [HttpPost("upload")]
+        [AuthorizeAttribute(Roles: new string[] { "ReadOnly", "User" })]
         public IActionResult Upload(IFormFile file)
         {
             if (!_fileImportService.IsValidFile(file))
