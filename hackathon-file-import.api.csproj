@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Downloads\hackaton-oauth.common\hackaton-file-import.common.csproj" />
+    <ProjectReference Include="hackaton-file-import.common\hackaton-file-import.common.csproj" />
   </ItemGroup>
 
 </Project>
