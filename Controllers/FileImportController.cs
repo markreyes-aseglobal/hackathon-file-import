@@ -11,6 +11,7 @@ using SharpCompress.Common;
 using Microsoft.Extensions.Configuration;
 using hackathon_file_import.Core.Models;
 using hackaton_file_import.common.Attributes;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace hackathon_file_import.Controllers
 {
@@ -32,21 +33,23 @@ namespace hackathon_file_import.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Tags = new[] { "File Import"})]
         public IEnumerable<FileMetaData> GetFileEntries()
         {
             return _fileImportService.GetFileEntries();
         }
 
         [HttpPost("upload")]
+        [SwaggerOperation(Tags = new[] { "File Import" })]
         [AuthorizeAttribute(Roles: new string[] { "ReadOnly", "User" })]
-        public IActionResult Upload(IFormFile file)
+        public IActionResult Upload([FromForm]IFormFile file,string userId)
         {
             if (!_fileImportService.IsValidFile(file))
             {
                 return BadRequest(_invalidFileTypeMessage);
             }
 
-            _fileImportService.SaveFile(file);
+            _fileImportService.SaveFile(file, userId);
             return Ok(_successMessage);
         }
     }

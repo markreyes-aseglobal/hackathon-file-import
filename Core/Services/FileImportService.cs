@@ -29,17 +29,21 @@ namespace hackathon_file_import.Core.Services
             }
 
             return true;
-            //var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-            //return extension == ".csv" || extension == ".xlsx";
         }
 
-        public void SaveFile(IFormFile file)
+        public void SaveFile(IFormFile file, string userId)
         {
             using (var memoryStream = new MemoryStream())
             {
+                var meta = new FileMetaData 
+                {
+                    FileName = file.FileName,
+                    UserId = userId,
+                    ContentType = file.ContentType
+                };
                 file.CopyTo(memoryStream);
                 var fileBytes = memoryStream.ToArray();
-                _repository.Add(fileBytes);
+                _repository.Add(fileBytes, meta);
             }
         }
 

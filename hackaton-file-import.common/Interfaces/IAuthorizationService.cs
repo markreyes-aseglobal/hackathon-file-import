@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-
-namespace hackaton_file_import.common.Interfaces
+﻿namespace hackaton_file_import.common.Interfaces
 {
     public interface IAuthorizationService
     {

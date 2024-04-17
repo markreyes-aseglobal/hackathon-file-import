@@ -1,4 +1,4 @@
-@hackathon_file_import_HostAddress = http://localhost:5161
+@hackathon_file_import.api_HostAddress = http://localhost:5161
 
 GET {{hackathon_file_import_HostAddress}}/weatherforecast/
 Accept: application/json

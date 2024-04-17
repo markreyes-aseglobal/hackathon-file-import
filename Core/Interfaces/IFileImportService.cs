@@ -6,7 +6,7 @@ namespace hackathon_file_import.Core.Interfaces
     public interface IFileImportService
     {
         bool IsValidFile(IFormFile file);
-        void SaveFile(IFormFile file);
+        void SaveFile(IFormFile file,string userId);
 
         IEnumerable<FileMetaData> GetFileEntries();
     }

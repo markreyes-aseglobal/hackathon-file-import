@@ -10,11 +10,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var appSettingsSection = builder.Configuration.GetSection(AppSettings.SectionName);
 builder.Services.Configure<AppSettings>(appSettingsSection);
 var appSettings = appSettingsSection.Get<AppSettings>();
-
 
 var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 builder.Services

@@ -20,27 +20,15 @@ namespace hackathon_file_import.Infrastructure.Repositories
                 DisableMD5 = false,
                 WriteConcern = WriteConcern.WMajority
             });
-
-            
         }
 
-        public void Add(byte[] entity)
+        public void Add(byte[] entity, FileMetaData meta)
         {
-            FileMetaData meta = new FileMetaData
-            {
-                UserId = "1234",
-                ContentType = "application/csv"
-            };
-
             var metadata = new BsonDocument
             {
                 { "userId", new BsonString(meta.UserId) }, 
-                { "contentType", new BsonString(meta.ContentType) },
-                { "isDeleted", new BsonBoolean(false) },
-                { "deletedBy", BsonNull.Value },
-                { "deletedDate", BsonNull.Value }
+                { "contentType", new BsonString(meta.ContentType) }
             };
-
 
             _gridFS.UploadFromBytes("files", entity, new GridFSUploadOptions
             {
@@ -67,8 +55,6 @@ namespace hackathon_file_import.Infrastructure.Repositories
                     FileName = fileInfo.Filename,
                     UserId = fileInfo.Metadata["userid"].AsString,
                     ContentType = fileInfo.Metadata["extension"].AsString,
-                    IsDeleted = fileInfo.Metadata["isdeleted"].AsBoolean
-                    // Handle DeletedBy and DeletedDate if needed
                 });
             }
 
