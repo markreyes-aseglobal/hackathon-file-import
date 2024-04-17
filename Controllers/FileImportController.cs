@@ -41,6 +41,7 @@ namespace hackathon_file_import.Controllers
 
         [HttpPost("upload")]
         [SwaggerOperation(Tags = new[] { "File Import" })]
+        [AuthorizeAttribute(Roles: new string[] { "ReadOnly", "User" })]
         public IActionResult Upload([FromForm]IFormFile file,string userId)
         {
             if (!_fileImportService.IsValidFile(file))
