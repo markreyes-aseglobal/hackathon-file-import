@@ -52,6 +52,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var tokenValidationSettings = builder.Configuration.GetSection(TokenValidationSettings.SectionName);
+builder.Services.Configure<TokenValidationSettings>(tokenValidationSettings);
+var servicesUrlsOptions = tokenValidationSettings.Get<TokenValidationSettings>();
+
+builder.Services.AddHttpClient("oauth", httpClient =>
+{
+    httpClient.BaseAddress = new Uri(servicesUrlsOptions.OAuthServiceUrl);
+    httpClient.DefaultRequestHeaders.ConnectionClose = true;
+});
+
+
 var mongoDbSection = builder.Configuration.GetSection(MongoDbSettings.SectionName);
 builder.Services.Configure<MongoDbSettings>(mongoDbSection);
 var mongoDbOptions = mongoDbSection.Get<MongoDbSettings>();
@@ -65,15 +76,8 @@ builder.Services.AddTransient<IFileImportService, FileImportService>();
 builder.Services.AddTransient<IRepository<byte[]>, BlobRepository>();
 var app = builder.Build();
 
-var tokenValidationSettings = builder.Configuration.GetSection(TokenValidationSettings.SectionName);
-builder.Services.Configure<TokenValidationSettings>(tokenValidationSettings);
-var servicesUrlsOptions = tokenValidationSettings.Get<TokenValidationSettings>();
 
-builder.Services.AddHttpClient("oauth", httpClient =>
-{
-    httpClient.BaseAddress = new Uri(servicesUrlsOptions.OAuthServiceUrl);
-    httpClient.DefaultRequestHeaders.ConnectionClose = true;
-});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
